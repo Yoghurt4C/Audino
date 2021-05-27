@@ -1,0 +1,16 @@
+[
+{
+  "modid": "audino",
+  "name": "Audino",
+  "description": "Peek at ItemStack NBT while wrapping excessively long Tooltips",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Yoghurt4C"],
+  "credits": "LatvianModder, GiantNuker",
+  "logoFile": "assets/audino/icon.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]
