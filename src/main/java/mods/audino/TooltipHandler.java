@@ -16,6 +16,7 @@ import java.util.List;
 
 public class TooltipHandler {
     final static String GRAY = "§7", DGRAY = "§8", BLUE = "§9", YELLOW = "§e", DGREEN = "§2", RED = "§c";
+    private static final String[] COLORS = {BLUE, DGREEN, YELLOW, RED};
 
     @SubscribeEvent
     public void onTooltip(ItemTooltipEvent event) {
@@ -23,10 +24,10 @@ public class TooltipHandler {
     }
 
     public static void appendNbt(final ItemStack stack, final List<String> tooltip) {
-        if (stack.hasTagCompound()) {
+        if (Config.showNBT() && stack.hasTagCompound()) {
             final NBTTagCompound tag = stack.getTagCompound();
             if (GuiContainer.isCtrlKeyDown()) {
-                String[] nbt = WordUtils.wrap(GRAY + "NBT: " + format(new StringBuilder(), tag, 0), 96, "\n", false).split("\\n");
+                String[] nbt = WordUtils.wrap("§7NBT: " + format(new StringBuilder(), tag, 0), Config.getWrapAmount(), "\n", false).split("\\n");
                 tooltip.addAll(Arrays.asList(nbt));
             } else {
                 final String hold = Minecraft.isRunningOnMac ? "§7NBT: §8(CMD)" : "§7NBT: §8(CTRL)";
@@ -34,26 +35,26 @@ public class TooltipHandler {
             }
         }
 
-        List<String> od = new ArrayList<>();
-        final int[] ids = OreDictionary.getOreIDs(stack);
-        for (int id : ids) {
-            od.add(OreDictionary.getOreName(id));
+        if (Config.showOD()) {
+            final int[] ids = OreDictionary.getOreIDs(stack);
+            if (ids.length == 0) return;
 
-        }
-        if (od.size() == 0) {
-            return;
-        }
-        if (GuiContainer.isShiftKeyDown()) {
-            tooltip.add("§7OD: ");
-            for (String s : od) {
-                tooltip.add("§8#" + s);
+            List<String> od = new ArrayList<>();
+            for (int id : ids) {
+                od.add(OreDictionary.getOreName(id));
+
+
             }
-        } else {
-            tooltip.add("§7OD: §8(SHIFT)");
+            if (Audino.isAltPressed()) {
+                tooltip.add("§7OD: ");
+                for (String s : od) {
+                    tooltip.add("§8#" + s);
+                }
+            } else {
+                tooltip.add("§7OD: §8(ALT)");
+            }
         }
     }
-
-    private static final String[] COLORS = {BLUE, DGREEN, YELLOW, RED};
 
     private static StringBuilder format(StringBuilder builder, NBTBase nbt, int level) {
         if (nbt == null) {

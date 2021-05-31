@@ -19,8 +19,16 @@ public class Config {
     static int wrapAmount;
     static boolean showNBT, showOD;
 
+    public static int getWrapAmount() {
+        return wrapAmount;
+    }
+
     public static boolean showNBT() {
         return showNBT;
+    }
+
+    public static boolean showOD() {
+        return showOD;
     }
 
     private static void handleConfig(Map<String, String> cfg) {

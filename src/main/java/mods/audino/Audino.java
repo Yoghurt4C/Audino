@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import mods.audino.proxy.Proxy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.input.Keyboard;
 
 import static mods.audino.Audino.MODID;
 
@@ -20,5 +21,9 @@ public class Audino {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         PROXY.preInit();
+    }
+
+    public static boolean isAltPressed() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU);
     }
 }
