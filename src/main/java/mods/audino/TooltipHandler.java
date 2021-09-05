@@ -126,7 +126,7 @@ public class TooltipHandler {
                 return builder.append(COLORS[level % COLORS.length]).append(']');
             }
             default:
-                return builder.append(GRAY).append(nbt.toString());
+                return builder.append(GRAY).append(nbt);
         }
     }
 }

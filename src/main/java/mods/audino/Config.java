@@ -17,7 +17,7 @@ import static mods.audino.Audino.L;
 public class Config {
     static boolean isInitialized = false;
     static int wrapAmount;
-    static boolean showNBT, showOD;
+    static boolean showNBT, showOD, enableLinking;
 
     public static int getWrapAmount() {
         return wrapAmount;
@@ -31,10 +31,13 @@ public class Config {
         return showOD;
     }
 
+    public static boolean enableLinking() { return enableLinking; }
+
     private static void handleConfig(Map<String, String> cfg) {
         wrapAmount = getInt("wrapAmount", cfg);
         showNBT = getBool("showNBT", cfg);
         showOD = getBool("showOD", cfg);
+        enableLinking = getBool("enableLinking", cfg);
     }
 
     public static void tryInit() {
@@ -49,7 +52,9 @@ public class Config {
                 Entry.of("showNBT", true,
                         "showNBT: Shows the ItemStack NBT in Tooltips. [Side: CLIENT | Default: true]"),
                 Entry.of("showOD", true,
-                        "showOD: Shows the OreDictionary names the ItemStack belongs to. [Side: CLIENT | Default: true]")
+                        "showOD: Shows the OreDictionary names the ItemStack belongs to. [Side: CLIENT | Default: true]"),
+                Entry.of("enableLinking", true,
+                        "enableLinking: Lets you showcase your items in chat for everyone to see. Stolen NinjaTips feature. [Side: BOTH | Default: true]")
         );
         Path configPath = Loader.instance().getConfigDir().toPath().resolve("Audino.properties");
         try {
@@ -60,7 +65,7 @@ public class Config {
             }
             Properties config = new Properties();
             StringBuilder content = new StringBuilder().append("#Audino Configuration.\n");
-            content.append("#Last generated at: ").append(new Date().toString()).append("\n\n");
+            content.append("#Last generated at: ").append(new Date()).append("\n\n");
             FileInputStream input = new FileInputStream(configurationFile);
             config.load(input);
             for (Entry<?> entry : entries) {
@@ -93,7 +98,7 @@ public class Config {
                             cfg.put(key, value.toString());
                         }
                     } else if (cls.equals(Boolean.class)) {
-                        if (!"true".equals(s.toLowerCase()) && !"false".equals(s.toLowerCase())) {
+                        if (!"true".equalsIgnoreCase(s) && !"false".equalsIgnoreCase(s)) {
                             L.error("[Audino] Error processing configuration file \"" + configurationFile + "\".");
                             L.error("[Audino] Expected configuration value for " + key + " to be a boolean, found \"" + s + "\". Using default value \"" + value + "\" instead.");
                             cfg.put(key, value.toString());

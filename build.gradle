@@ -40,7 +40,7 @@ repositories {
 	}
 	maven {
 		name = "OC repo"
-		url = "http://maven.cil.li/"
+		url = "https://maven.cil.li/"
 	}
 	maven {
 		name = "jitpack"
@@ -48,6 +48,10 @@ repositories {
 	}
 	flatDir {
 		dirs "libs"
+	}
+	maven {
+		name = "sponge"
+		url = "https://repo.spongepowered.org/maven/"
 	}
 }
 
@@ -59,7 +63,7 @@ repositories {
 
 apply plugin: 'forge'
 
-version = "1.0.1"
+version = "1.1.0"
 group= "mods.audino" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Audino"
 
