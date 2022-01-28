@@ -72,7 +72,7 @@ public class NbtCommandHandler {
     }
 
     private static int dumpBlockNBT(BlockPos pos, ClientPlayerEntity player) {
-        final World world = player.getWorld();
+        final World world = player.world;
         final ItemStack stack = new ItemStack(world.getBlockState(pos).getBlock(), 1);
         final BlockEntity entity = world.getBlockEntity(pos);
         stack.setNbt(entity != null ? entity.createNbt() : new NbtCompound());

@@ -16,8 +16,8 @@ public class Audino implements ModInitializer {
     public static final String MODID = "audino";
     public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public static boolean isChatKeyPressed() {
-        return MinecraftClient.getInstance().options.keyChat.wasPressed();
+    public static boolean isChatKeyPressed(int key, int scan) {
+        return MinecraftClient.getInstance().options.keyChat.matchesKey(key, scan);
     }
 
     @Override

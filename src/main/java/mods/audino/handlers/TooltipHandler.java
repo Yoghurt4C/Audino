@@ -23,6 +23,8 @@ public class TooltipHandler {
 
     public static void appendNbt(ItemStack stack, TooltipContext context, List<Text> tooltip) {
         if (Config.showNBT() && stack.hasNbt()) {
+            if (context.isAdvanced())
+                tooltip.removeIf(text -> text instanceof TranslatableText && ((TranslatableText) text).getKey().equals("item.nbt_tags"));
             final NbtCompound tag = stack.getNbt();
             if (Screen.hasControlDown()) {
                 String[] nbt = WordUtils.wrap("§7NBT: " + format(new StringBuilder(), tag, 0), Config.getWrapAmount(), "\n", false).split("\\n");
@@ -31,7 +33,9 @@ public class TooltipHandler {
                 }
             } else {
                 final String hold = MinecraftClient.IS_SYSTEM_MAC ? "§7NBT: §8(CMD)" : "§7NBT: §8(CTRL)";
-                tooltip.add(new LiteralText(hold));
+                if (context.isAdvanced()) {
+                    tooltip.add(new LiteralText(hold));
+                }
             }
         }
 
@@ -43,10 +47,10 @@ public class TooltipHandler {
             if (Screen.hasAltDown()) {
                 tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY));
                 for (Identifier id : tags) {
-                    tooltip.add(new LiteralText(id.toString()).formatted(Formatting.DARK_GRAY));
+                    tooltip.add(new LiteralText(" #" + id.toString()).formatted(Formatting.DARK_GRAY));
                 }
             } else {
-                tooltip.add(new TranslatableText("audino.text.tags", "(ALT)").formatted(Formatting.GRAY));
+                tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY).append(new LiteralText("§8(ALT)")));
             }
         }
     }
@@ -56,9 +60,9 @@ public class TooltipHandler {
             return builder.append(DGRAY).append("null");
         }
         switch (nbt.getType()) {
-            case NbtElement.END_TYPE:
+            case 0:
                 return builder.append(DGRAY).append("null");
-            case NbtElement.LIST_TYPE: {
+            case 9: {
                 NbtList list = (NbtList) nbt;
                 builder.append(COLORS[level % COLORS.length]).append('[');
 
@@ -72,7 +76,7 @@ public class TooltipHandler {
 
                 return builder.append(COLORS[level % COLORS.length]).append(']');
             }
-            case NbtElement.COMPOUND_TYPE: {
+            case 10: {
                 NbtCompound map = (NbtCompound) nbt;
                 builder.append(COLORS[level % COLORS.length]).append('{');
 
@@ -91,7 +95,7 @@ public class TooltipHandler {
 
                 return builder.append(COLORS[level % COLORS.length]).append('}');
             }
-            case NbtElement.BYTE_ARRAY_TYPE: {
+            case 7: {
                 NbtByteArray list = (NbtByteArray) nbt;
                 builder.append(COLORS[level % COLORS.length]).append('[');
 
@@ -105,7 +109,7 @@ public class TooltipHandler {
 
                 return builder.append(COLORS[level % COLORS.length]).append(']');
             }
-            case NbtElement.INT_ARRAY_TYPE: {
+            case 11: {
                 NbtIntArray list = (NbtIntArray) nbt;
                 builder.append(COLORS[level % COLORS.length]).append('[');
 
