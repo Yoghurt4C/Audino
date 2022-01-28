@@ -22,8 +22,8 @@ public class TooltipHandler {
     private static final String[] COLORS = {BLUE, DGREEN, YELLOW, RED};
 
     public static void appendNbt(ItemStack stack, TooltipContext context, List<Text> tooltip) {
-        if (Config.showNBT() && stack.hasNbt()) {
-            final NbtCompound tag = stack.getNbt();
+        if (Config.showNBT() && stack.hasTag()) {
+            final CompoundTag tag = stack.getTag();
             if (Screen.hasControlDown()) {
                 String[] nbt = WordUtils.wrap("§7NBT: " + format(new StringBuilder(), tag, 0), Config.getWrapAmount(), "\n", false).split("\\n");
                 for (String s : nbt) {
@@ -46,20 +46,20 @@ public class TooltipHandler {
                     tooltip.add(new LiteralText(id.toString()).formatted(Formatting.DARK_GRAY));
                 }
             } else {
-                tooltip.add(new TranslatableText("audino.text.tags", "(ALT)").formatted(Formatting.GRAY));
+                tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY).append(new LiteralText("§8(CMD)")));
             }
         }
     }
 
-    private static StringBuilder format(StringBuilder builder, NbtElement nbt, int level) {
+    private static StringBuilder format(StringBuilder builder, Tag nbt, int level) {
         if (nbt == null) {
             return builder.append(DGRAY).append("null");
         }
         switch (nbt.getType()) {
-            case NbtElement.END_TYPE:
+            case 0:
                 return builder.append(DGRAY).append("null");
-            case NbtElement.LIST_TYPE: {
-                NbtList list = (NbtList) nbt;
+            case 9: {
+                ListTag list = (ListTag) nbt;
                 builder.append(COLORS[level % COLORS.length]).append('[');
 
                 for (int i = 0; i < list.size(); i++) {
@@ -72,8 +72,8 @@ public class TooltipHandler {
 
                 return builder.append(COLORS[level % COLORS.length]).append(']');
             }
-            case NbtElement.COMPOUND_TYPE: {
-                NbtCompound map = (NbtCompound) nbt;
+            case 10: {
+                CompoundTag map = (CompoundTag) nbt;
                 builder.append(COLORS[level % COLORS.length]).append('{');
 
                 boolean first = true;
@@ -91,8 +91,8 @@ public class TooltipHandler {
 
                 return builder.append(COLORS[level % COLORS.length]).append('}');
             }
-            case NbtElement.BYTE_ARRAY_TYPE: {
-                NbtByteArray list = (NbtByteArray) nbt;
+            case 7: {
+                ByteArrayTag list = (ByteArrayTag) nbt;
                 builder.append(COLORS[level % COLORS.length]).append('[');
 
                 for (int i = 0; i < list.getByteArray().length; i++) {
@@ -105,8 +105,8 @@ public class TooltipHandler {
 
                 return builder.append(COLORS[level % COLORS.length]).append(']');
             }
-            case NbtElement.INT_ARRAY_TYPE: {
-                NbtIntArray list = (NbtIntArray) nbt;
+            case 11: {
+                IntArrayTag list = (IntArrayTag) nbt;
                 builder.append(COLORS[level % COLORS.length]).append('[');
 
                 for (int i = 0; i < list.getIntArray().length; i++) {

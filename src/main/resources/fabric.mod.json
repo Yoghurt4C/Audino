@@ -24,10 +24,10 @@
   "depends": {
     "fabricloader": ">=0.12.12",
     "fabric": "*",
-    "minecraft": "1.18.x",
-    "java": ">=17"
+    "minecraft": "1.16.x",
+    "java": ">=8"
   },
   "suggests": {
-    "another-mod": "*"
+    "flamingo": "*"
   }
 }

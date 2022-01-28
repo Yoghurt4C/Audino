@@ -38,7 +38,7 @@ public class MessageHandler implements ServerPlayNetworking.PlayChannelHandler {
     public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         final ItemStack stack = buf.readItemStack();
         final Text link = getLinkMessage(player, stack);
-        server.getPlayerManager().broadcast(link, MessageType.CHAT, Util.NIL_UUID);
+        server.getPlayerManager().broadcastChatMessage(link, MessageType.CHAT, Util.NIL_UUID);
     }
 
     public static void send(ItemStack stack) {

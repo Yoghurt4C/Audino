@@ -6,7 +6,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -53,7 +53,7 @@ public class NbtCommandHandler {
             player.sendMessage(text.append(new TranslatableText("audino.text.handempty")), false);
             return SINGLE_SUCCESS;
         }
-        if (!stack.hasNbt()) {
+        if (!stack.hasTag()) {
             player.sendMessage(text.append(new TranslatableText("audino.text.handnonbt")), false);
             return SINGLE_SUCCESS;
         }
@@ -63,19 +63,19 @@ public class NbtCommandHandler {
 
     private static Text getItemText(ItemStack stack, boolean copyText) {
         MutableText text = new LiteralText("").append(stack.getName());
-        if (copyText && stack.hasNbt()) {
+        if (copyText && stack.hasTag()) {
             text.append(new LiteralText(" ")
                     .append(new TranslatableText("audino.text.clicktocopy").formatted(Formatting.UNDERLINE, Formatting.ITALIC).styled(
-                            style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, stack.getNbt().toString())))));
+                            style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, stack.getTag().toString())))));
         }
         return text;
     }
 
     private static int dumpBlockNBT(BlockPos pos, ClientPlayerEntity player) {
-        final World world = player.getWorld();
+        final World world = player.world;
         final ItemStack stack = new ItemStack(world.getBlockState(pos).getBlock(), 1);
         final BlockEntity entity = world.getBlockEntity(pos);
-        stack.setNbt(entity != null ? entity.createNbt() : new NbtCompound());
+        stack.setTag(entity != null ? entity.toTag(new CompoundTag()) : new CompoundTag());
         player.sendMessage(new LiteralText("").append(new LiteralText("[Audino] ").formatted(Formatting.BLUE)).
                 append(getItemText(stack, true)), false);
         return SINGLE_SUCCESS;
