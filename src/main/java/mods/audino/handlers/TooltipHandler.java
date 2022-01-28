@@ -1,0 +1,126 @@
+package mods.audino.handlers;
+
+import mods.audino.Config;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.*;
+import net.minecraft.tag.ItemTags;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.text.WordUtils;
+
+import java.util.Collection;
+import java.util.List;
+
+public class TooltipHandler {
+    final static String GRAY = "§7", DGRAY = "§8", BLUE = "§9", YELLOW = "§e", DGREEN = "§2", RED = "§c";
+    private static final String[] COLORS = {BLUE, DGREEN, YELLOW, RED};
+
+    public static void appendNbt(ItemStack stack, TooltipContext context, List<Text> tooltip) {
+        if (Config.showNBT() && stack.hasNbt()) {
+            final NbtCompound tag = stack.getNbt();
+            if (Screen.hasControlDown()) {
+                String[] nbt = WordUtils.wrap("§7NBT: " + format(new StringBuilder(), tag, 0), Config.getWrapAmount(), "\n", false).split("\\n");
+                for (String s : nbt) {
+                    tooltip.add(new LiteralText(s));
+                }
+            } else {
+                final String hold = MinecraftClient.IS_SYSTEM_MAC ? "§7NBT: §8(CMD)" : "§7NBT: §8(CTRL)";
+                tooltip.add(new LiteralText(hold));
+            }
+        }
+
+        if (Config.showOD()) {
+            final Collection<Identifier> tags = ItemTags.getTagGroup().getTagsFor(stack.getItem());
+            if (tags.size() == 0) return;
+
+
+            if (Screen.hasAltDown()) {
+                tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY));
+                for (Identifier id : tags) {
+                    tooltip.add(new LiteralText(id.toString()).formatted(Formatting.DARK_GRAY));
+                }
+            } else {
+                tooltip.add(new TranslatableText("audino.text.tags", "(ALT)").formatted(Formatting.GRAY));
+            }
+        }
+    }
+
+    private static StringBuilder format(StringBuilder builder, NbtElement nbt, int level) {
+        if (nbt == null) {
+            return builder.append(DGRAY).append("null");
+        }
+        switch (nbt.getType()) {
+            case NbtElement.END_TYPE:
+                return builder.append(DGRAY).append("null");
+            case NbtElement.LIST_TYPE: {
+                NbtList list = (NbtList) nbt;
+                builder.append(COLORS[level % COLORS.length]).append('[');
+
+                for (int i = 0; i < list.size(); i++) {
+                    if (i > 0) {
+                        builder.append(DGRAY).append(',').append(' ');
+                    }
+
+                    format(builder, list.get(i), level + 1);
+                }
+
+                return builder.append(COLORS[level % COLORS.length]).append(']');
+            }
+            case NbtElement.COMPOUND_TYPE: {
+                NbtCompound map = (NbtCompound) nbt;
+                builder.append(COLORS[level % COLORS.length]).append('{');
+
+                boolean first = true;
+
+                for (String key : map.getKeys()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        builder.append(DGRAY).append(',').append(' ');
+                    }
+
+                    builder.append(DGRAY).append(key).append(':').append(' ');
+                    format(builder, map.get(key), level + 1);
+                }
+
+                return builder.append(COLORS[level % COLORS.length]).append('}');
+            }
+            case NbtElement.BYTE_ARRAY_TYPE: {
+                NbtByteArray list = (NbtByteArray) nbt;
+                builder.append(COLORS[level % COLORS.length]).append('[');
+
+                for (int i = 0; i < list.getByteArray().length; i++) {
+                    if (i > 0) {
+                        builder.append(DGRAY).append(',').append(' ');
+                    }
+
+                    builder.append(DGRAY).append(list.getByteArray()[i]);
+                }
+
+                return builder.append(COLORS[level % COLORS.length]).append(']');
+            }
+            case NbtElement.INT_ARRAY_TYPE: {
+                NbtIntArray list = (NbtIntArray) nbt;
+                builder.append(COLORS[level % COLORS.length]).append('[');
+
+                for (int i = 0; i < list.getIntArray().length; i++) {
+                    if (i > 0) {
+                        builder.append(DGRAY).append(',').append(' ');
+                    }
+
+                    builder.append(GRAY).append(list.getIntArray()[i]);
+                }
+
+                return builder.append(COLORS[level % COLORS.length]).append(']');
+            }
+            default:
+                return builder.append(GRAY).append(nbt);
+        }
+    }
+}

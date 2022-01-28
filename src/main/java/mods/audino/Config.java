@@ -1,7 +1,7 @@
 package mods.audino;
 
 import com.google.common.collect.ImmutableSet;
-import cpw.mods.fml.common.Loader;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
 import java.lang.ref.WeakReference;
@@ -31,7 +31,9 @@ public class Config {
         return showOD;
     }
 
-    public static boolean enableLinking() { return enableLinking; }
+    public static boolean enableLinking() {
+        return enableLinking;
+    }
 
     private static void handleConfig(Map<String, String> cfg) {
         wrapAmount = getInt("wrapAmount", cfg);
@@ -56,7 +58,7 @@ public class Config {
                 Entry.of("enableLinking", true,
                         "enableLinking: Lets you showcase your items in chat for everyone to see. Stolen NinjaTips feature. [Side: BOTH | Default: true]")
         );
-        Path configPath = Loader.instance().getConfigDir().toPath().resolve("Audino.properties");
+        Path configPath = FabricLoader.getInstance().getConfigDir().resolve("Audino.properties");
         try {
             boolean changed = false;
             File configurationFile = configPath.toFile();

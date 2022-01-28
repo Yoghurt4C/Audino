@@ -1,0 +1,6 @@
+{
+  "audino.text.tags": "Tags: %s",
+  "audino.text.handempty": "Your hands are OK.",
+  "audino.text.handnonbt": "Held item has no NBT!",
+  "audino.text.clicktocopy": "Click to copy NBT."
+}

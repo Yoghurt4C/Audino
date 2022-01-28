@@ -1,68 +1,49 @@
 package mods.audino.network;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.network.MessageType;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
-import java.io.IOException;
+import static mods.audino.Audino.MODID;
 
-public class MessageHandler implements IMessageHandler<MessageHandler.Message, IMessage> {
+public class MessageHandler implements ServerPlayNetworking.PlayChannelHandler {
+    public static Identifier ITEM_LINK = new Identifier(MODID, "item_link");
 
-    @Override
-    public IMessage onMessage(Message message, MessageContext ctx) {
-        final ItemStack stack = message.stack;
-        final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-        final IChatComponent link = getLinkMessage(player, stack);
-        for (Object p : player.getServerForPlayer().playerEntities) {
-            ((EntityPlayer) p).addChatComponentMessage(link);
-        }
-        return null;
-    }
-
-    public static IChatComponent getLinkMessage(EntityPlayer player, ItemStack stack) {
-        ChatComponentText text;
+    public static Text getLinkMessage(PlayerEntity player, ItemStack stack) {
+        MutableText text;
         StringBuilder b = new StringBuilder();
         b.append("<").append(player.getDisplayName()).append("> ");
-        if (stack.isStackable()) { b.append(stack.stackSize).append("x "); }
-        text = new ChatComponentText(b.toString());
-        text.appendSibling(stack.func_151000_E());
+        if (stack.isStackable()) {
+            b.append(stack.getCount()).append("x ");
+        }
+        text = new LiteralText(b.toString());
+        text.append(stack.toHoverableText());
         return text;
     }
 
-    public static class Message implements IMessage {
-        ItemStack stack;
+    @Override
+    public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        final ItemStack stack = buf.readItemStack();
+        final Text link = getLinkMessage(player, stack);
+        server.getPlayerManager().broadcast(link, MessageType.CHAT, Util.NIL_UUID);
+    }
 
-        public Message() { }
-
-        public Message(ItemStack stack) {
-            this.stack = stack;
-        }
-
-        @Override
-        public void fromBytes(ByteBuf bytes) {
-            try {
-                PacketBuffer buf = new PacketBuffer(bytes);
-                this.stack = buf.readItemStackFromBuffer();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public void toBytes(ByteBuf bytes) {
-            try {
-                PacketBuffer buf = new PacketBuffer(bytes);
-                buf.writeItemStackToBuffer(stack);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    public static void send(ItemStack stack) {
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+        buf.writeItemStack(stack);
+        ClientPlayNetworking.send(ITEM_LINK, buf);
     }
 }
