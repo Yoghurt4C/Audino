@@ -25,9 +25,10 @@ public class ItemLinkMixin extends Screen {
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     public void sendIt(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> ctx) {
-        if (Screen.hasControlDown() && Audino.isChatKeyPressed()) {
+        if (Screen.hasControlDown() && Audino.isChatKeyPressed(keyCode, scanCode)) {
             if (focusedSlot != null && focusedSlot.hasStack()) {
                 MessageHandler.send(focusedSlot.getStack());
+                ctx.setReturnValue(true);
             }
         }
     }

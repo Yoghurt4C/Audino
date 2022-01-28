@@ -23,13 +23,11 @@ public class MessageHandler implements ServerPlayNetworking.PlayChannelHandler {
     public static Identifier ITEM_LINK = new Identifier(MODID, "item_link");
 
     public static Text getLinkMessage(PlayerEntity player, ItemStack stack) {
-        MutableText text;
-        StringBuilder b = new StringBuilder();
-        b.append("<").append(player.getDisplayName()).append("> ");
+        MutableText text = new LiteralText("<");
+        text.append(player.getDisplayName().asString()).append("> ");
         if (stack.isStackable()) {
-            b.append(stack.getCount()).append("x ");
+            text.append(stack.getCount() + "x ");
         }
-        text = new LiteralText(b.toString());
         text.append(stack.toHoverableText());
         return text;
     }

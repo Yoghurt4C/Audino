@@ -23,6 +23,8 @@ public class TooltipHandler {
 
     public static void appendNbt(ItemStack stack, TooltipContext context, List<Text> tooltip) {
         if (Config.showNBT() && stack.hasTag()) {
+            if (context.isAdvanced())
+                tooltip.removeIf(text -> text instanceof TranslatableText && ((TranslatableText) text).getKey().equals("item.nbt_tags"));
             final CompoundTag tag = stack.getTag();
             if (Screen.hasControlDown()) {
                 String[] nbt = WordUtils.wrap("§7NBT: " + format(new StringBuilder(), tag, 0), Config.getWrapAmount(), "\n", false).split("\\n");
@@ -31,7 +33,9 @@ public class TooltipHandler {
                 }
             } else {
                 final String hold = MinecraftClient.IS_SYSTEM_MAC ? "§7NBT: §8(CMD)" : "§7NBT: §8(CTRL)";
-                tooltip.add(new LiteralText(hold));
+                if (context.isAdvanced()) {
+                    tooltip.add(new LiteralText(hold));
+                }
             }
         }
 
@@ -43,10 +47,10 @@ public class TooltipHandler {
             if (Screen.hasAltDown()) {
                 tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY));
                 for (Identifier id : tags) {
-                    tooltip.add(new LiteralText(id.toString()).formatted(Formatting.DARK_GRAY));
+                    tooltip.add(new LiteralText(" #" + id.toString()).formatted(Formatting.DARK_GRAY));
                 }
             } else {
-                tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY).append(new LiteralText("§8(CMD)")));
+                tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY).append(new LiteralText("§8(ALT)")));
             }
         }
     }
