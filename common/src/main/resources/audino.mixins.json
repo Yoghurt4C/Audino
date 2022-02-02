@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "mods.audino.mixins",
+  "plugin": "mods.audino.mixins.AudinoPlugin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "ItemLinkMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

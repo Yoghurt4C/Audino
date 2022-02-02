@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "audino",
+    "name": "Audino",
+    "description": "Peek at ItemStack NBT!",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/audino",
+    "updateUrl": "",
+    "authorList": [
+      "Yoghurt4C"
+    ],
+    "credits": "LatvianModder, NinjaPhenix",
+    "logoFile": "assets/audino/icon.png",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

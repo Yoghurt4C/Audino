@@ -1,17 +1,21 @@
  
+/.architectury-transformer/
 /.gradle/
+/*/.gradle/
 /.settings/
 /.idea/
 /.run/
+/.vscode/
 /bin/
 /build/
+/*/build/*
 /eclipse/
-/gradle/
 /jars/
 /lib/
 /libs/
 /out/
 /run/
+/*/run/
 /Unused Lib/
 /.classpath
 /.directory
@@ -27,3 +31,4 @@
 /mod.zip
 /mixin-0.8-SNAPSHOT.jar
 /remappedSrc/
+/*/remapped/
