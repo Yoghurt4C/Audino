@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[39,)"
+#issueTrackerURL = ""
+license = "MMPL-J 1.0"
+
+[[mods]]
+modId = "audino"
+version = "${version}"
+displayName = "Audino"
+authors = "Yoghurt4C"
+description = '''
+Peek at ItemStack NBT!
+'''
+logoFile = "assets/audino/icon.png"
+
+[[dependencies.audino]]
+modId = "forge"
+mandatory = true
+versionRange = "[39,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.audino]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.18,)"
+ordering = "NONE"
+side = "BOTH"
