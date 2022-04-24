@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -134,20 +132,6 @@ public class Config {
     }
 
     private static Path getConfigDir() {
-        try {
-            Class<?> cls = Class.forName("net.fabricmc.loader.api.FabricLoader");
-            Method getInst = cls.getMethod("getInstance");
-            Object instance = getInst.invoke(cls);
-            return (Path) cls.getMethod("getConfigDir").invoke(instance);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            try {
-                Class cls = Class.forName("net.minecraftforge.fml.loading.FMLPaths");
-                Enum enu = Enum.valueOf(cls, "CONFIGDIR");
-                return (Path) cls.getMethod("get").invoke(enu);
-            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException b) {
-                AudinoBase.L.error("[Audino] Could not resolve the config directory through MOD Loader internals. Lucky!");
-            }
-        }
         return Paths.get(".").resolve("config");
     }
 

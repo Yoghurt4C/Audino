@@ -4,18 +4,22 @@ import mods.audino.Config;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
-import net.minecraft.tag.ItemTags;
+import net.minecraft.tag.TagKey;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.util.registry.RegistryKey;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class TooltipHandler {
     final static String GRAY = "§7", DGRAY = "§8", BLUE = "§9", YELLOW = "§e", DGREEN = "§2", RED = "§c";
@@ -38,17 +42,22 @@ public class TooltipHandler {
         }
 
         if (Config.showOD()) {
-            final Collection<Identifier> tags = ItemTags.getTagGroup().getTagsFor(stack.getItem());
-            if (tags.size() == 0) return;
+            Optional<RegistryKey<Item>> key = Registry.ITEM.getKey(stack.getItem());
+            if (key.isPresent()) {
+                Optional<RegistryEntry<Item>> entry = Registry.ITEM.getEntry(key.get());
+                if (entry.isPresent()) {
+                    final Collection<TagKey<Item>> tags = entry.get().streamTags().toList();
+                    if (tags.size() == 0) return;
 
-
-            if (Screen.hasAltDown()) {
-                tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY));
-                for (Identifier id : tags) {
-                    tooltip.add(new LiteralText(" #" + id.toString()).formatted(Formatting.DARK_GRAY));
+                    if (Screen.hasAltDown()) {
+                        tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY));
+                        for (TagKey<Item> k : tags) {
+                            tooltip.add(new LiteralText(" #" + k.id().toString()).formatted(Formatting.DARK_GRAY));
+                        }
+                    } else {
+                        tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY).append(new LiteralText("§8(ALT)")));
+                    }
                 }
-            } else {
-                tooltip.add(new TranslatableText("audino.text.tags", "").formatted(Formatting.GRAY).append(new LiteralText("§8(ALT)")));
             }
         }
     }

@@ -11,6 +11,6 @@ public class AudinoBase {
     public static ItemLinkHandler LH;
 
     public static boolean isChatKeyPressed(int key, int scan) {
-        return MinecraftClient.getInstance().options.keyChat.matchesKey(key, scan);
+        return MinecraftClient.getInstance().options.chatKey.matchesKey(key, scan);
     }
 }
